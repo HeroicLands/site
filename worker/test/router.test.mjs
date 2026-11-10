@@ -99,7 +99,7 @@ test("leaves this site's own paths alone", () => {
         "/modules/",
         "/reference/",
         "/css/style.css",
-        "/img/brand/sohl-icon-white.webp",
+        "/img/brand/hl-dragon-white.svg",
         "/fonts/x.woff2",
         "/pagefind/pagefind-ui.js",
     ];
