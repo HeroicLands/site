@@ -9,8 +9,8 @@ description: Licensing for Heroic Lands content, fiction, and brand
 
 Two areas of this site are licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0):
 
-- **The World of Thalorna** — the setting materials under [heroiclands.org/thalorna](https://www.heroiclands.org/thalorna/): world lore, geography, cultures, history, adventures, characters, creatures, and stat blocks.
-- **Song of Heroic Lands** — the descriptive game-system materials under [heroiclands.org/sohl](https://www.heroiclands.org/sohl/): afflictions, gear, skills, traits, mystical abilities, and the like.
+- **The World of Thalorna** — the setting materials under [heroiclands.org/thalorna](/thalorna/): world lore, geography, cultures, history, adventures, characters, creatures, and stat blocks.
+- **Song of Heroic Lands** — the descriptive game-system materials under [heroiclands.org/sohl](/sohl/): afflictions, gear, skills, traits, mystical abilities, and the like.
 
 You are free to use, adapt, and redistribute this material — including for commercial purposes — as long as you credit Heroic Lands and share any derivatives under the same or a compatible license. For the full terms, see the [CC BY-SA 4.0 License Deed](https://creativecommons.org/licenses/by-sa/4.0/) or the [full legal code](https://creativecommons.org/licenses/by-sa/4.0/legalcode.en).
 

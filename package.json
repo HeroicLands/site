@@ -19,8 +19,8 @@
     },
     "scripts": {
         "prepare": "git config core.hooksPath .githooks || true",
-        "build": "node utils/build-roster.mjs --cache && package-build site build && node utils/build-roster.mjs --publish build/site",
-        "serve": "node utils/build-roster.mjs --cache && package-build site serve",
+        "build": "package-build site build",
+        "serve": "package-build site serve",
         "check:assets": "node utils/check-assets.mjs",
         "roster": "node utils/build-roster.mjs",
         "check:roster": "node utils/build-roster.mjs --check",
@@ -30,7 +30,7 @@
         "lint:markdown:fix": "package-build markdown --fix"
     },
     "devDependencies": {
-        "@heroiclands/package-build": "^25.5.5"
+        "@heroiclands/package-build": "^25.8.0"
     },
     "overrides": {
         "@heroiclands/package-build": {

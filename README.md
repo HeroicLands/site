@@ -28,15 +28,31 @@ npm ci            # once
 npm run serve     # preview at http://127.0.0.1:1313/, rebuilt and reloaded as you edit
 ```
 
-To do a production build into `build/site/`, exactly as CI does it:
+Build locally into `build/site/` with the default internal site address:
 
 ```bash
 npm run build
 ```
 
+Select both site and CDN addresses explicitly for internal or public output:
+
+```bash
+npm run build -- --root internal.heroiclands.org
+npm run build -- --root heroiclands.org
+```
+
+The selected root supplies `https://www.<root>/` and `https://cdn.<root>`.
+Without an explicit `--root`, the site address defaults to the internal root
+and configured `site.assets` remains in effect. An explicit root overrides
+configured assets. The command only writes local output; publishing pages and
+CDN assets are separate operations. Production CI explicitly selects
+`heroiclands.org`.
+
 The build renders every note, writes the blog's Atom feed, the tag pages, the
 sitemap, the sitemap index and `robots.txt` naming every package site's
-sitemap, and the search index, and copies `static/nav.json` beside them.
+sitemap, and the search index. It writes selected-root navigation as `nav.json`
+beside them. The build validates the committed roster projections before
+rendering; it never changes those source files.
 
 The search box searches this site and every package site whose index
 `site.mergeIndexes` names. Each of those is read from `/<package>/pagefind/` on
@@ -59,7 +75,7 @@ logo.
 each one, failing on any non-200 and naming the page that asked for it:
 
 ```bash
-npm run build && npm run check:assets
+npm run build -- --root heroiclands.org && npm run check:assets
 ```
 
 It takes a build directory (default `build/site`) and `--base` /
@@ -108,9 +124,20 @@ by `npm run check:roster`:
 
 - `data/roster.json` — the cross-link projection, resolving each package's
   prefix and the packages that depend on it.
-- `static/nav.json` — the header menu. This site's own header is drawn from it,
-  and it is published at `https://www.heroiclands.org/nav.json` for the package
-  sites' own build toolchain to read.
+- `static/nav.json` — the canonical public header menu, checked in for review.
+  Builds derive their header and published `/nav.json` from the same roster,
+  using the selected site origin. Package sites cache the published navigation
+  through their build toolchain.
+
+`site.inputs` in `package-build.config.yaml` names `utils/site-inputs.mjs`.
+Package-build calls its default export with `{ config }` before writing output.
+The provider checks both committed files against canonical public projections,
+then returns `{ navigation, files: { "nav.json": text } }` using the effective
+`config.homepage` origin. It consumes the builder's resolved inputs rather than
+reading CLI arguments or deriving hosts itself. `utils/roster-projections.mjs`
+shares the canonical checks with `npm run check:roster`; `npm run roster` alone
+rewrites those files.
+The provider regressions run with `cd worker && npm test`.
 
 Adding a package is one entry in `roster.mjs`, a `npm run roster` run, and the
 package's name in `site.sitemaps` in `package-build.config.yaml` — and in

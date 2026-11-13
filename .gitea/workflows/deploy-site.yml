@@ -67,7 +67,7 @@ jobs:
               run: npm ci
 
             - name: Build the site
-              run: npm run build
+              run: npm run build -- --root heroiclands.org
 
             # Fails the deploy if a page asks for an asset address the CDN does
             # not serve.

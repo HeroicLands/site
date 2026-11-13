@@ -10,6 +10,7 @@ paths:
     content: content
 
 site:
+    inputs: utils/site-inputs.mjs
     title: Heroic Lands
     description: Heroic Lands — World of Thalorna and Foundry VTT Game Systems and Modules
     assets: https://cdn.heroiclands.org

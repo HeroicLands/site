@@ -35,7 +35,7 @@ note, no `thalorna` note — and holds none.
 ```
 site (package-build content tree)
     │  content/  — authored here, in this repository
-    │  .gitea/workflows/deploy-site.yml — npm run build
+    │  .gitea/workflows/deploy-site.yml — npm run build -- --root heroiclands.org
     ▼
 Cloudflare Pages, project heroiclands-site  (custom domain: www.pkg.heroiclands.org)
     │
@@ -46,11 +46,42 @@ Cloudflare  — DNS, CDN, the apex → www redirect, and the routing Worker,
 
 `deploy-site.yml` runs on every push to `main` and on `workflow_dispatch`, on
 Gitea. It checks this repository out, installs `@heroiclands/package-build`
-with `npm ci`, builds with `npm run build`, checks the assets the pages ask for
-and that the tree is a complete site, and publishes `build/site/` to the
-Pages project. **That is the whole build** — no content generation step and no
+with `npm ci`, builds with `npm run build -- --root heroiclands.org`, checks the
+assets the pages ask for and that the tree is a complete site, and publishes
+`build/site/` to the Pages project. **That is the whole build** — no content generation step and no
 other repository checked out: `package-build site build` reads `content/` as it
 stands.
+
+## Selecting a build address
+
+`npm run build` invokes `package-build site build` directly. Arguments after
+`--` reach the builder, including `--out` and `--root`:
+
+```bash
+npm run build -- --root internal.heroiclands.org
+npm run build -- --root heroiclands.org
+```
+
+The root selects `https://www.<root>/` for pages and navigation and
+`https://cdn.<root>` for assets. Without an explicit root, the site origin is
+internal and the authored `site.assets` is preserved. An explicit root selects
+both hosts. Authored `homepage`, assets configuration and canonical roster
+projections remain unchanged. The local build performs no deployment or asset
+publication and needs no deployment credentials.
+
+The root input provider checks `data/roster.json` and `static/nav.json` against
+canonical public projections before rendering. It supplies the selected-origin
+menu and identical `/nav.json` payload to the builder. Stale projections fail
+with `npm run roster` guidance; changing roots never regenerates committed
+files. Public attribution quotations retain their published source addresses.
+
+The production deployment and pull-request build explicitly select
+`--root heroiclands.org`, retaining the public Pages payload and existing Worker
+routing. Building internal output does not change that deployment workflow or
+publish an internal site. Page delivery and manual CDN publication remain
+separate from building.
+
+## Generated discovery files
 
 The build writes the sitemap index and `robots.txt` from `site.sitemaps` in
 `package-build.config.yaml`, which names every package in the roster, and
@@ -240,13 +271,15 @@ The theme every site in the family is drawn with ships inside
 `@heroiclands/package-build`, and it holds **no address of its own**. Each
 consumer supplies its own, so a site can move without the theme knowing:
 
-- `package.json`'s `homepage` — the one place this site's address is written
-  down, with `site.base: /` saying it is the root of its origin.
-- The navigation — the theme renders whatever navigation the build caches.
-  Here that is `static/nav.json`, generated from `roster.mjs` (see the README)
-  and cached by `npm run build` before the site build reads it; a package site
-  caches the copy this site publishes with `package-build deps fetch`.
-- `site.assets` — where images resolve from (`cdn.heroiclands.org`).
+- The effective `config.homepage` — resolved from the authored `package.json`
+  `homepage` and build arguments, with `site.base: /` keeping this site at the
+  root of its selected origin.
+- The navigation — `site.inputs` validates the canonical committed projections
+  (`static/nav.json` and `data/roster.json`), then supplies this site's header
+  and published `/nav.json` from `roster.mjs` using the effective origin. A
+  package site caches the published navigation with `package-build deps fetch`.
+- The effective `site.assets` — where images resolve, selected by the build's
+  root/assets arguments or the authored configuration.
 - `site.notfound` — the 404 page's wording and routes back.
 
 A change to the theme is a change to every site that pins package-build; bump

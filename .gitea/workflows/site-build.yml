@@ -65,7 +65,7 @@ jobs:
             # Checks the roster's projections are current, then builds what
             # publishes.
             - name: Build the site
-              run: npm run build
+              run: npm run build -- --root heroiclands.org
 
             # Fails the build if a page or the configuration asks for an asset
             # address the CDN does not actually serve.

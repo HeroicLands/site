@@ -34,7 +34,7 @@ on:
             - "roster.mjs"
             - "data/**"
             - "static/**"
-            - "utils/build-roster.mjs"
+            - "utils/**"
             - "package.json"
             - "package-lock.json"
             - ".gitea/workflows/worker-test.yml"

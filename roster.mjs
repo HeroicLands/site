@@ -59,10 +59,12 @@
  *
  * `nav` places an entry in the header: `top` for one that gets its own entry,
  * `modules` for one listed under "Other Modules". Roster order is menu order.
- * `utils/build-roster.mjs` writes the menu as `static/nav.json`, which this
- * site's own header is drawn from and which the package sites' toolchain
- * reads, and the roster as `data/roster.json`, the cross-link projection
- * below. Nothing authors a menu anywhere else.
+ * `utils/build-roster.mjs` writes the canonical public projections:
+ * `static/nav.json`, the menu, and `data/roster.json`, the cross-link projection
+ * below. `site.inputs` validates those committed files, then supplies this
+ * site's header and published `/nav.json` using the effective build origin.
+ * Package sites cache that published navigation. Nothing authors a menu
+ * anywhere else.
  *
  * ## Adding a package
  *
@@ -272,23 +274,24 @@ const SITE_ORIGIN = "https://www.heroiclands.org";
  * order is menu order; `nav` decides placement.
  *
  * @param {Package[]} [packages] - The roster to render.
+ * @param {string} [origin] - The effective site origin; canonical public origin by default.
  * @returns {{name: string, url: string, children?: {name: string, url: string}[]}[]}
  *   The menu, in order.
  */
-export function menuTree(packages = PACKAGES) {
+export function menuTree(packages = PACKAGES, origin = SITE_ORIGIN) {
     const entryFor = (pkg) => ({
         name: pkg.navName ?? pkg.title,
-        url: `${SITE_ORIGIN}${prefixFor(pkg.id)}`,
+        url: `${origin}${prefixFor(pkg.id)}`,
     });
     return [
-        { name: "Home", url: `${SITE_ORIGIN}/` },
+        { name: "Home", url: `${origin}/` },
         ...packages.filter((pkg) => pkg.nav === "top").map(entryFor),
         {
             name: "Other Modules",
-            url: `${SITE_ORIGIN}/modules/`,
+            url: `${origin}/modules/`,
             children: packages.filter((pkg) => pkg.nav === "modules").map(entryFor),
         },
-        { name: "License", url: `${SITE_ORIGIN}/license/` },
+        { name: "License", url: `${origin}/license/` },
     ];
 }
 
@@ -298,8 +301,9 @@ export function menuTree(packages = PACKAGES) {
  * toolchain to read.
  *
  * @param {Package[]} [packages] - The roster to render.
+ * @param {string} [origin] - The effective site origin; canonical public origin by default.
  * @returns {string} The file's contents, newline-terminated.
  */
-export function renderNavFile(packages = PACKAGES) {
-    return `${JSON.stringify(menuTree(packages), null, 4)}\n`;
+export function renderNavFile(packages = PACKAGES, origin = SITE_ORIGIN) {
+    return `${JSON.stringify(menuTree(packages, origin), null, 4)}\n`;
 }
