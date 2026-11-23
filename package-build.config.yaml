@@ -1,5 +1,6 @@
 contentPackage: heroiclands
 packageKind: documentation
+userAgentUrl: https://www.heroiclands.org/
 
 authors:
     - name: Tom Rodriguez
